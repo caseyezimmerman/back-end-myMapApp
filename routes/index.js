@@ -36,7 +36,7 @@ router.post('/signup', (req,res,next)=>{
 
 router.post('/map',function(req,res,next){
 	console.log(req.body)
-	var location = JSON.stringify(req.body.location)
+	var location = (req.body.currentLocation)
 	var distance = req.body.distance
 	var insertQuery = `INSERT INTO info (location, distance) VALUES (?,?)`
 	connection.query(insertQuery,[location, distance],(error,results)=>{
