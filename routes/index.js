@@ -7,14 +7,7 @@ var randToken = require('rand-token')
 var connection = mysql.createConnection(config);
 connection.connect();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
-
 router.post('/signup', (req,res,next)=>{
-	console.log(req.body)
-	console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
 	var name = req.body.name
 	var email = req.body.email
 	var password = req.body.password
@@ -33,6 +26,33 @@ router.post('/signup', (req,res,next)=>{
 		}
 	})
 })
+
+router.post('/login', (req, res, next) => {
+	console.log('login route')
+	var email = req.body.email
+	var password = req.body.password
+	var selectQuery = 'SELECT * FROM user WHERE email = ?;';
+	connection.query(selectQuery, [email], (error, results) => {
+		if (error) {
+			throw error
+		} else {
+			// handle user does not exist
+			if (results.length == 0) {
+				// send user to signup
+			} else {
+				var passwordMatch = bcrypt.compareSync(password, results[0].password)
+				// handle password match
+				if (passwordMatch) {
+					// session?
+					// send them map
+				// handle password does not match
+				} else {
+					// tell user password does not match
+				}
+			}
+		}
+	})
+});
 
 router.post('/map',function(req,res,next){
 	console.log(req.body)
