@@ -13,23 +13,39 @@ router.post('/signup', (req,res,next)=>{
 	var password = req.body.password
 	var hash = bcrypt.hashSync(password)
 	const token = randToken.uid(60);
-	var insertQuery = `INSERT INTO user (name,email,password,token) VALUES (?,?,?,?)`
-	connection.query(insertQuery,[name,email,hash, token],(error,results)=>{
+	var selectQuery = `SELECT * from user WHERE email = ?;`;
+	connection.query(selectQuery,[email],(error,results)=>{
 		if(error){
-			throw error
-		}else{
+			throw error;
+		} else if (results.length > 0) {
 			res.json({
-				token: token,
-				name: name,
-				msg: "loginSuccess"
+				msg: "emailTaken"
+			})
+		} else {
+			var insertQuery = `INSERT INTO user (name,email,password,token) VALUES (?,?,?,?);`;
+			connection.query(insertQuery, [name, email, hash, token], (error, results) => {
+				if (error) {
+					throw error
+				} else {
+					res.json({
+						token: token,
+						name: name,
+						msg: "loginSuccess"
+					})
+				}
 			})
 		}
-	})
+	})	
 })
 
 router.post('/login', (req, res, next) => {
 	var email = req.body.email
-	var password = req.body.password
+	// case for when password is undefined
+	if (req.body.password !== undefined){
+		var password = req.body.password;
+	} else {
+		var password = '';
+	}
 	var selectQuery = 'SELECT * FROM user WHERE email = ?;';
 	connection.query(selectQuery, [email], (error, results) => {
 		if (error) {
@@ -43,6 +59,7 @@ router.post('/login', (req, res, next) => {
 				})
 			} else {
 				var passwordMatch = bcrypt.compareSync(password, results[0].password)
+				console.log(passwordMatch)
 				// handle password match
 				if (passwordMatch) {
 					// session?
