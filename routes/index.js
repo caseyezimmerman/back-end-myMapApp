@@ -28,7 +28,6 @@ router.post('/signup', (req,res,next)=>{
 })
 
 router.post('/login', (req, res, next) => {
-	console.log('login route')
 	var email = req.body.email
 	var password = req.body.password
 	var selectQuery = 'SELECT * FROM user WHERE email = ?;';
@@ -39,15 +38,24 @@ router.post('/login', (req, res, next) => {
 			// handle user does not exist
 			if (results.length == 0) {
 				// send user to signup
+				res.json({
+					msg: 'userDoesNotExist',
+				})
 			} else {
 				var passwordMatch = bcrypt.compareSync(password, results[0].password)
 				// handle password match
 				if (passwordMatch) {
 					// session?
 					// send them map
+					res.json({
+						msg: 'userFound',
+					})
 				// handle password does not match
 				} else {
 					// tell user password does not match
+					res.json({
+						msg: 'wrongPassword',
+					})
 				}
 			}
 		}
