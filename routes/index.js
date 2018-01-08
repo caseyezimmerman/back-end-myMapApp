@@ -62,18 +62,18 @@ router.post('/login', (req, res, next) => {
 	})
 });
 
-router.post('/map',function(req,res,next){
+router.post('/timer',function(req,res,next){
 	console.log(req.body)
-	var location = (req.body.currentLocation)
-	var distance = req.body.distance
-	var insertQuery = `INSERT INTO info (location, distance) VALUES (?,?)`
-	connection.query(insertQuery,[location, distance],(error,results)=>{
+	var minutes = req.body.timerMinutes
+	var seconds = req.body.timerSeconds
+	var insertQuery = `INSERT INTO time (minutes, seconds) VALUES (?,?)`
+	connection.query(insertQuery,[minutes, seconds],(error,results)=>{
 		if(error){
 			throw error
 		}else{
 			res.json({
-				location: location,
-				distance: distance
+				minutes: minutes,
+				seconds: seconds
 			})
 		}
 	})
