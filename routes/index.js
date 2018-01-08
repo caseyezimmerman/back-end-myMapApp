@@ -21,6 +21,7 @@ router.post('/signup', (req,res,next)=>{
 			res.json({
 				token: token,
 				name: name,
+				email: email,
 				msg: "loginSuccess"
 			})
 		}
@@ -66,14 +67,16 @@ router.post('/timer',function(req,res,next){
 	console.log(req.body)
 	var minutes = req.body.timerMinutes
 	var seconds = req.body.timerSeconds
-	var insertQuery = `INSERT INTO time (minutes, seconds) VALUES (?,?)`
-	connection.query(insertQuery,[minutes, seconds],(error,results)=>{
+	var distance = req.body.distance
+	var insertQuery = `INSERT INTO time (minutes, seconds, distance) VALUES (?,?,?)`
+	connection.query(insertQuery,[minutes, seconds, distance],(error,results)=>{
 		if(error){
 			throw error
 		}else{
 			res.json({
 				minutes: minutes,
-				seconds: seconds
+				seconds: seconds,
+				distance: distance
 			})
 		}
 	})
