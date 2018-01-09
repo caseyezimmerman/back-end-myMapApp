@@ -8,6 +8,7 @@ var connection = mysql.createConnection(config);
 connection.connect();
 
 router.post('/signup', (req,res,next)=>{
+	console.log(req.body)
 	var name = req.body.name
 	var email = req.body.email
 	var password = req.body.password
@@ -39,6 +40,7 @@ router.post('/signup', (req,res,next)=>{
 })
 
 router.post('/login', (req, res, next) => {
+
 	var email = req.body.email
 	// case for when password is undefined
 	if (req.body.password !== undefined){
