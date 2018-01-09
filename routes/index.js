@@ -7,6 +7,59 @@ var randToken = require('rand-token')
 var connection = mysql.createConnection(config);
 connection.connect();
 
+// dependencies for image upload
+var aws = require('aws-sdk');
+var fs = require('fs');
+var multerS3 = require('multer-s3');
+var multer = require('multer');
+
+// Tell multer where to save the files it gets
+var uploadDir = multer({
+	dest: 'public/images'
+});
+
+aws.config.loadFromPath('./config/config.json');
+aws.config.update({
+	signatureVersion: 'v4'
+});
+var s0 = new aws.S3({});
+
+var upload = multer({
+	storage: multerS3({
+		s3: s0,
+		bucket: 'tracker-app-photo-bucket',
+		contentType: multerS3.AUTO_CONTENT_TYPE,
+		acl: 'public-read',
+		metadata: (req, file, cb) => {
+			cb(null, { fieldName: file.fieldname });
+		},
+		key: (req, file, cb) => {
+			cb(null, Date.now() + file.originalname)
+		}
+	})
+});
+
+// Specify the name of the file input to accept
+var nameOfFileField = uploadDir.single('imageToUpload');
+
+// photo upload
+router.post('/photoUpload', upload.any(), (req,res)=>{
+	var info = req.files;
+	// url gets stored in database
+	var insertUrl = `INSERT INTO images (id, url) VALUES (?, ?, ?);`;
+	info.map((image) => {
+		connection.query(insertUrl, [userId, image.location], (error, results) => {
+			if (error) {
+				throw error;
+			}
+		});
+		res.json({
+			msg: 'imageUploaded',
+			imageUrl: image.location
+		});
+	});
+});
+
 router.post('/signup', (req,res,next)=>{
 	var name = req.body.name
 	var email = req.body.email
