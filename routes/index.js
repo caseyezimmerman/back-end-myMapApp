@@ -31,6 +31,7 @@ router.post('/signup', (req,res,next)=>{
 					res.json({
 						token: token,
 						name: name,
+						email: email,
 						msg: "loginSuccess"
 					})
 				}
