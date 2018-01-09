@@ -68,6 +68,7 @@ router.post('/login', (req, res, next) => {
 					// send them map
 					res.json({
 						msg: 'userFound',
+						userInfo: results[0]
 					})
 				// handle password does not match
 				} else {
