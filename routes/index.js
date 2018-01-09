@@ -61,6 +61,7 @@ router.post('/photoUpload', upload.any(), (req,res)=>{
 });
 
 router.post('/signup', (req,res,next)=>{
+	console.log(req.body)
 	var name = req.body.name
 	var email = req.body.email
 	var password = req.body.password
@@ -83,6 +84,7 @@ router.post('/signup', (req,res,next)=>{
 					res.json({
 						token: token,
 						name: name,
+						email: email,
 						msg: "loginSuccess"
 					})
 				}
@@ -92,6 +94,7 @@ router.post('/signup', (req,res,next)=>{
 })
 
 router.post('/login', (req, res, next) => {
+
 	var email = req.body.email
 	// case for when password is undefined
 	if (req.body.password !== undefined){
